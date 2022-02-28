@@ -48,9 +48,9 @@ def get_iris_data():
 #    In your SQL, be sure to join all 4 tables together, so that the resulting dataframe contains all the contract, payment, and internet service options. 
 #    Obtain your data from the Codeup Data Science Database.
 
-def get_telco_data():
+def get_telco_data(use_cache=True):
     filename = 'telco.csv'
-    if os.path.exists(filename):
+    if os.path.exists(filename) and use_cache:
         print('Reading from csv file...')
         return pd.read_csv(filename)
       
@@ -58,11 +58,12 @@ def get_telco_data():
     SELECT * 
     FROM customers
     JOIN internet_service_types USING (internet_service_type_id)
-    JOIN customer_contracts USING (contract_type_id)
-    JOIN customer_payments USING (payment_type_id)
+    JOIN contract_types USING (contract_type_id)
+    JOIN payment_types USING (payment_type_id)
     '''
     print('Getting a fresh copy from SQL database...')
     df = pd.read_sql(query, get_db_url('telco_churn'))
     print('Saving to csv...')
     df.to_csv(filename, index=False)
     return df
+
